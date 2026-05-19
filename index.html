@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DigiSlip | Pakistan's Digital Receipt Platform</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&display=swap');
+
+:root {
+  --navy:       #0B1F4B;
+  --navy-mid:   #132960;
+  --navy-light: #1A3A7A;
+  --blue:       #2563EB;
+  --sky:        #38BDF8;
+  --sky-light:  #BAE6FD;
+  --white:      #FFFFFF;
+  --off-white:  #F0F6FF;
+  --text:       #1E293B;
+  --muted:      #64748B;
+  --border:     #CBD5E1;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Lato', sans-serif;
+  color: var(--text);
+  background: var(--white);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: Cambria, Georgia, serif;
+  line-height: 1.2;
+}
+
+/* NAVBAR */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 999;
+  background: rgba(11,31,75,0.97);
+  backdrop-filter: blur(10px);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5%;
+  height: 68px;
+  border-bottom: 1px solid rgba(56,189,248,0.15);
+}
+.logo { font-family: Cambria, serif; font-size: 1.7rem; font-weight: 700; color: var(--white); }
+.logo span { color: var(--sky); }
+nav ul { display: flex; list-style: none; gap: 2rem; }
+nav a { color: rgba(255,255,255,0.75); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
+nav a:hover { color: var(--sky); }
+.nav-btn { background: var(--sky); color: var(--navy) !important; font-weight: 700 !important; padding: 0.45rem 1.3rem; border-radius: 4px; }
+.nav-btn:hover { background: var(--sky-light) !important; }
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 55%, var(--navy-light) 100%);
+  padding: 140px 5% 90px;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 700px 450px at 85% 25%, rgba(56,189,248,0.13) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 500px at 5% 75%, rgba(37,99,235,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-grid {
+  max-width: 1200px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 460px; gap: 4rem; align-items: center;
+  position: relative; z-index: 1;
+}
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3);
+  color: var(--sky); font-size: 0.74rem; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 0.35rem 0.9rem; border-radius: 3px; margin-bottom: 1.4rem;
+}
+.hero-eyebrow::before { content: ''; width: 6px; height: 6px; background: var(--sky); border-radius: 50%; animation: blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+h1.hero-title { font-size: clamp(2.4rem, 4.5vw, 3.6rem); color: var(--white); margin-bottom: 1.2rem; }
+h1.hero-title em { color: var(--sky); font-style: normal; }
+.hero-desc { font-size: 1.05rem; color: rgba(255,255,255,0.7); margin-bottom: 2.2rem; max-width: 520px; font-weight: 300; line-height: 1.8; }
+.hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+.btn-primary { background: var(--sky); color: var(--navy); padding: 0.8rem 2rem; border-radius: 4px; font-weight: 700; font-size: 0.95rem; text-decoration: none; display: inline-block; transition: background 0.2s, transform 0.2s; }
+.btn-primary:hover { background: var(--sky-light); transform: translateY(-2px); }
+.btn-outline { border: 1.5px solid rgba(255,255,255,0.3); color: var(--white); padding: 0.8rem 2rem; border-radius: 4px; font-weight: 400; font-size: 0.95rem; text-decoration: none; display: inline-block; transition: border-color 0.2s, color 0.2s; }
+.btn-outline:hover { border-color: var(--sky); color: var(--sky); }
+.hero-stats { display: flex; gap: 2.5rem; margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); flex-wrap: wrap; }
+.hs-num { font-family: Cambria, serif; font-size: 2rem; font-weight: 700; color: var(--sky); line-height: 1; }
+.hs-lbl { font-size: 0.78rem; color: rgba(255,255,255,0.5); margin-top: 0.2rem; }
+
+/* PHONE MOCKUP — WhatsApp Receipt */
+.phone-outer { display: flex; justify-content: center; align-items: center; }
+.phone {
+  width: 250px; height: 500px;
+  background: #0F172A; border-radius: 38px;
+  border: 5px solid #334155;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(255,255,255,0.06);
+  position: relative; overflow: hidden; display: flex; flex-direction: column;
+}
+.phone-notch { position: absolute; top: 13px; left: 50%; transform: translateX(-50%); width: 80px; height: 20px; background: #0F172A; border-radius: 10px; z-index: 10; }
+.phone-screen { flex: 1; display: flex; flex-direction: column; padding-top: 40px; }
+.wa-header { background: #075E54; padding: 10px 14px; display: flex; align-items: center; gap: 10px; }
+.wa-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--sky); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: var(--navy); flex-shrink: 0; }
+.wa-name { font-size: 0.74rem; font-weight: 700; color: #fff; }
+.wa-sub { font-size: 0.6rem; color: rgba(255,255,255,0.6); }
+.wa-dots { margin-left: auto; color: rgba(255,255,255,0.7); font-size: 1.1rem; }
+.wa-body { flex: 1; background: #ECE5DD; padding: 12px 8px; display: flex; flex-direction: column; gap: 8px; overflow: hidden; }
+.msg { max-width: 88%; padding: 8px 10px; border-radius: 8px; font-size: 0.63rem; line-height: 1.5; }
+.msg-in { background: #fff; align-self: flex-start; border-top-left-radius: 2px; color: #333; }
+.msg-out { background: #DCF8C6; align-self: flex-end; border-top-right-radius: 2px; color: #333; }
+.receipt-card { background: #fff; border-radius: 6px; padding: 8px; border-left: 3px solid #075E54; }
+.receipt-title { font-size: 0.6rem; font-weight: 700; color: #075E54; margin-bottom: 4px; }
+.receipt-row { display: flex; justify-content: space-between; font-size: 0.56rem; color: #555; border-bottom: 1px solid #f0f0f0; padding: 2px 0; }
+.receipt-total { display: flex; justify-content: space-between; font-size: 0.62rem; font-weight: 700; color: #075E54; padding-top: 3px; margin-top: 2px; }
+.msg-time { font-size: 0.5rem; color: #999; text-align: right; margin-top: 3px; }
+.wa-bottom { background: #F0F0F0; padding: 7px 8px; display: flex; align-items: center; gap: 6px; }
+.wa-input { flex: 1; background: #fff; border-radius: 20px; padding: 5px 10px; font-size: 0.6rem; color: #999; }
+.wa-send { width: 28px; height: 28px; background: #075E54; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.75rem; flex-shrink: 0; }
+
+/* SECTIONS */
+.section { padding: 90px 5%; }
+.section-inner { max-width: 1200px; margin: 0 auto; }
+.section-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); margin-bottom: 0.6rem; }
+.section-title { font-size: clamp(1.8rem, 3vw, 2.6rem); color: var(--navy); margin-bottom: 1rem; }
+.section-sub { font-size: 1rem; color: var(--muted); max-width: 600px; line-height: 1.75; }
+
+/* PROBLEM */
+.problem { background: var(--off-white); }
+.prob-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3rem; }
+.prob-card { background: var(--white); border-radius: 8px; border: 1px solid var(--border); padding: 1.8rem; transition: box-shadow 0.2s, transform 0.2s; }
+.prob-card:hover { box-shadow: 0 8px 30px rgba(11,31,75,0.1); transform: translateY(-3px); }
+.prob-icon { width: 50px; height: 50px; border-radius: 10px; background: linear-gradient(135deg, var(--navy), var(--navy-light)); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: 1rem; }
+.prob-card h3 { font-size: 1rem; color: var(--navy); margin-bottom: 0.4rem; }
+.prob-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+
+/* HOW IT WORKS */
+.how-grid { display: grid; grid-template-columns: 1fr 380px; gap: 5rem; align-items: start; margin-top: 3rem; }
+.steps { display: flex; flex-direction: column; }
+.step { display: flex; gap: 1.4rem; padding: 1.5rem 0; border-bottom: 1px solid var(--border); }
+.step:last-child { border-bottom: none; }
+.step-num { width: 44px; height: 44px; border-radius: 50%; flex-shrink: 0; background: var(--navy); color: var(--white); display: flex; align-items: center; justify-content: center; font-family: Cambria, serif; font-size: 1.1rem; font-weight: 700; }
+.step-body h4 { font-size: 1.05rem; color: var(--navy); margin-bottom: 0.3rem; }
+.step-body p { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+
+/* QR Phone Mockup */
+.phone2 {
+  width: 220px; height: 450px;
+  background: #0F172A; border-radius: 34px;
+  border: 4px solid #334155;
+  box-shadow: 0 30px 70px rgba(0,0,0,0.35);
+  overflow: hidden; margin: 0 auto;
+  display: flex; flex-direction: column;
+  position: relative;
+}
+.phone2-notch { position: absolute; top: 11px; left: 50%; transform: translateX(-50%); width: 70px; height: 17px; background: #0F172A; border-radius: 9px; z-index: 10; }
+.p2-screen { flex: 1; padding-top: 30px; display: flex; flex-direction: column; }
+.p2-topbar { background: var(--navy); padding: 8px 14px; display: flex; align-items: center; justify-content: space-between; }
+.p2-topbar-title { font-size: 0.68rem; font-weight: 700; color: var(--white); font-family: Cambria, serif; }
+.p2-topbar-logo { font-size: 0.62rem; font-weight: 700; color: var(--sky); }
+.p2-tabs { display: flex; background: #132960; }
+.p2-tab { flex: 1; font-size: 0.57rem; color: rgba(255,255,255,0.4); padding: 5px 0; text-align: center; border-bottom: 2px solid transparent; }
+.p2-tab.active { color: var(--sky); border-color: var(--sky); font-weight: 700; }
+.p2-content { flex: 1; background: #F8FAFF; padding: 12px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.p2-heading { font-size: 0.66rem; font-weight: 700; color: var(--navy); text-align: center; font-family: Cambria, serif; }
+.qr-frame { width: 110px; height: 110px; border: 2px solid var(--border); border-radius: 8px; padding: 7px; background: #fff; display: flex; align-items: center; justify-content: center; }
+.p2-store-box { background: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 8px 10px; width: 100%; }
+.p2-store-name { font-size: 0.65rem; font-weight: 700; color: var(--navy); }
+.p2-store-sub { font-size: 0.55rem; color: var(--muted); }
+.p2-notice { font-size: 0.56rem; color: var(--muted); text-align: center; line-height: 1.5; }
+.p2-notice strong { color: #075E54; }
+.p2-btn { width: 100%; background: var(--navy); color: var(--white); font-size: 0.63rem; font-weight: 700; padding: 8px; border-radius: 5px; text-align: center; font-family: Cambria, serif; }
+.p2-or { font-size: 0.54rem; color: var(--muted); }
+
+/* USP */
+.usp { background: var(--navy); }
+.usp .section-title { color: var(--white); }
+.usp .section-label { color: var(--sky); }
+.usp .section-sub { color: rgba(255,255,255,0.6); }
+.table-wrap { overflow-x: auto; margin-top: 3rem; }
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.6); font-weight: 700; font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; padding: 1rem 1.2rem; text-align: left; }
+th:nth-child(2) { background: rgba(56,189,248,0.15); color: var(--sky); }
+td { padding: 0.85rem 1.2rem; border-bottom: 1px solid rgba(255,255,255,0.06); color: rgba(255,255,255,0.8); }
+td:nth-child(2) { background: rgba(56,189,248,0.07); color: var(--white); }
+tr:hover td { background: rgba(255,255,255,0.03); }
+tr:hover td:nth-child(2) { background: rgba(56,189,248,0.12); }
+.yes { color: #4ADE80; font-weight: 700; }
+.no { color: #F87171; }
+.ds { color: var(--sky); font-weight: 700; }
+
+/* MARKET */
+.market-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem; margin-top: 3rem; }
+.mkt-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 2rem; position: relative; overflow: hidden; transition: box-shadow 0.2s; }
+.mkt-card:hover { box-shadow: 0 8px 30px rgba(11,31,75,0.1); }
+.mkt-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--navy), var(--blue)); }
+.mkt-tag { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue); margin-bottom: 0.5rem; }
+.mkt-val { font-family: Cambria, serif; font-size: 2.4rem; font-weight: 700; color: var(--navy); line-height: 1; margin-bottom: 0.5rem; }
+.mkt-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+
+/* REVENUE */
+.revenue { background: var(--off-white); }
+.rev-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1.5rem; margin-top: 3rem; }
+.rev-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 1.8rem; display: flex; gap: 1.2rem; align-items: flex-start; transition: box-shadow 0.2s; }
+.rev-card:hover { box-shadow: 0 8px 30px rgba(11,31,75,0.1); }
+.rev-pct { font-family: Cambria, serif; font-size: 2.2rem; font-weight: 700; color: var(--navy); line-height: 1; flex-shrink: 0; width: 70px; }
+.rev-body h4 { font-size: 1rem; color: var(--navy); margin-bottom: 0.4rem; }
+.rev-body p { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+
+/* TRACTION */
+.traction-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.2rem; margin-top: 3rem; }
+.tr-card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; display: flex; gap: 0.9rem; }
+.tr-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--sky); flex-shrink: 0; margin-top: 4px; }
+.tr-dot.amber { background: #FB923C; }
+.tr-body h4 { font-size: 0.92rem; color: var(--navy); font-weight: 700; margin-bottom: 0.25rem; }
+.tr-body p { font-size: 0.82rem; color: var(--muted); line-height: 1.6; }
+
+/* TEAM */
+.team { background: var(--navy); }
+.team .section-title { color: var(--white); }
+.team .section-label { color: var(--sky); }
+.team-wrap { display: flex; justify-content: center; margin-top: 3rem; }
+.team-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(56,189,248,0.2); border-radius: 10px; padding: 2.5rem 3rem; max-width: 560px; width: 100%; text-align: center; }
+.team-name { font-size: 1.7rem; color: var(--white); margin-bottom: 0.3rem; }
+.team-id { font-size: 0.85rem; color: rgba(255,255,255,0.5); margin-bottom: 1.4rem; }
+.team-divider { height: 1px; background: rgba(255,255,255,0.1); margin: 1.4rem 0; }
+.team-advisor { font-size: 0.9rem; color: rgba(255,255,255,0.7); line-height: 1.7; }
+.team-advisor strong { color: var(--sky); }
+
+/* CTA */
+.cta-section { background: linear-gradient(135deg, var(--navy-light), var(--blue)); padding: 90px 5%; text-align: center; }
+.cta-section h2 { font-size: 2.4rem; color: var(--white); margin-bottom: 1rem; }
+.cta-section p { font-size: 1rem; color: rgba(255,255,255,0.7); margin-bottom: 2.5rem; }
+
+/* FOOTER */
+footer { background: var(--navy); padding: 2rem 5%; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.08); flex-wrap: wrap; gap: 1rem; }
+.footer-logo { font-family: Cambria, serif; font-size: 1.3rem; font-weight: 700; color: var(--white); }
+.footer-logo span { color: var(--sky); }
+footer p { font-size: 0.82rem; color: rgba(255,255,255,0.4); }
+
+@media (max-width: 1000px) {
+  .hero-grid, .how-grid { grid-template-columns: 1fr; }
+  .phone-outer { display: none; }
+  nav ul { display: none; }
+  .prob-grid, .market-grid, .traction-grid { grid-template-columns: 1fr 1fr; }
+  .rev-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .prob-grid, .market-grid, .traction-grid, .rev-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Digi<span>Slip</span></div>
+  <ul>
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#market">Market</a></li>
+    <li><a href="#revenue">Revenue</a></li>
+    <li><a href="#team">Team</a></li>
+    <li><a href="#contact" class="nav-btn">Request Access</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid">
+    <div>
+      <div class="hero-eyebrow">Pakistan's First WhatsApp Receipt Platform</div>
+      <h1 class="hero-title">End of the<br><em>Paper Receipt</em> Era</h1>
+      <p class="hero-desc">DigiSlip plugs into your existing POS and delivers digital receipts via WhatsApp in under 2 seconds. No new hardware. No app download. Just instant, secure, digital receipts your customers actually keep.</p>
+      <div class="hero-btns">
+        <a href="#how" class="btn-primary">See How It Works</a>
+        <a href="#market" class="btn-outline">View Market Opportunity</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hs-num">4.2M</div>
+          <div class="hs-lbl">Businesses in Pakistan</div>
+        </div>
+        <div>
+          <div class="hs-num">$180M+</div>
+          <div class="hs-lbl">Market Opportunity</div>
+        </div>
+        <div>
+          <div class="hs-num">0%</div>
+          <div class="hs-lbl">Digital Adoption Today</div>
+        </div>
+      </div>
+    </div>
+    <div class="phone-outer">
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="wa-header">
+            <div class="wa-avatar">DS</div>
+            <div>
+              <div class="wa-name">DigiSlip Receipts</div>
+              <div class="wa-sub">Business Account · Online</div>
+            </div>
+            <div class="wa-dots">⋮</div>
+          </div>
+          <div class="wa-body">
+            <div class="msg msg-in">
+              <div class="receipt-card">
+                <div class="receipt-title">📄 Your Digital Receipt</div>
+                <div class="receipt-row"><span>Al-Fatah Superstore</span><span></span></div>
+                <div class="receipt-row"><span>Milk 2L</span><span>PKR 320</span></div>
+                <div class="receipt-row"><span>Bread</span><span>PKR 85</span></div>
+                <div class="receipt-row"><span>Eggs (12)</span><span>PKR 360</span></div>
+                <div class="receipt-total"><span>Total</span><span>PKR 765</span></div>
+              </div>
+              <div style="font-size:0.55rem;color:#888;margin-top:4px;">✅ Saved to your receipt wallet</div>
+              <div class="msg-time">10:43 AM ✓✓</div>
+            </div>
+            <div class="msg msg-in" style="font-size:0.62rem;">
+              🎉 <strong>+15 loyalty points</strong> earned!<br>
+              You now have <strong>340 points</strong> total.
+              <div class="msg-time">10:43 AM ✓✓</div>
+            </div>
+            <div class="msg msg-out" style="font-size:0.62rem;">
+              Got it, thank you!
+              <div class="msg-time" style="text-align:right;">10:44 AM ✓✓</div>
+            </div>
+            <div class="msg msg-in" style="font-size:0.62rem;">
+              View all your receipts:<br>
+              <span style="color:#075E54;font-weight:700;">wallet.digislip.pk</span>
+              <div class="msg-time">10:44 AM ✓✓</div>
+            </div>
+          </div>
+          <div class="wa-bottom">
+            <div class="wa-input">Type a message...</div>
+            <div class="wa-send">➤</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="section problem" id="problem">
+  <div class="section-inner">
+    <div class="section-label">The Problem</div>
+    <h2 class="section-title">Pakistan's Retail Is a Data Black Hole</h2>
+    <p class="section-sub">Every thermal paper slip printed is a lost data point. Billions of rupees of invisible economic activity that no one can track.</p>
+    <div class="prob-grid">
+      <div class="prob-card"><div class="prob-icon">🌳</div><h3>Paper Waste and Cost</h3><p>PKR 500 to 2,000 per month per store on thermal paper alone. Around 360,000 trees cut annually in Pakistan just to print receipts customers lose within minutes.</p></div>
+      <div class="prob-card"><div class="prob-icon">❌</div><h3>No Transaction Traceability</h3><p>Lost receipts create disputes, no refund history, and no audit trail for consumers or retailers. A structural failure with cascading consequences for everyone.</p></div>
+      <div class="prob-card"><div class="prob-icon">📊</div><h3>Zero Loyalty Infrastructure</h3><p>Brands cannot re-engage customers after a sale. Customer loyalty programs are virtually non-existent at the merchant level across Pakistan's retail sector.</p></div>
+      <div class="prob-card"><div class="prob-icon">🔀</div><h3>Fragmented POS Ecosystem</h3><p>Data sits siloed across dozens of incompatible systems with no unified intelligence layer connecting merchants to their customer behaviour and trends.</p></div>
+      <div class="prob-card"><div class="prob-icon">🏛️</div><h3>FBR Compliance Gaps</h3><p>FBR cannot audit real-time transaction data at scale. Every unrecorded receipt represents a tax gap and massive national revenue leakage.</p></div>
+      <div class="prob-card"><div class="prob-icon">💸</div><h3>No Affordable Analytics</h3><p>Merchants want customer data but cannot afford enterprise BI tools. DigiSlip fills this gap at a price below what they already spend on thermal paper every month.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section" id="how">
+  <div class="section-inner">
+    <div class="section-label">How It Works</div>
+    <h2 class="section-title">Four Steps. Under Two Seconds.</h2>
+    <p class="section-sub">DigiSlip sits between your existing POS and the customer as a lightweight middleware. No hardware change. No app required on either side.</p>
+    <div class="how-grid">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>Customer Pays at Existing POS</h4>
+            <p>Payment is processed on the merchant's existing terminal as usual. There is absolutely no change to the checkout process or staff workflow.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h4>QR Code Appears at Counter</h4>
+            <p>DigiSlip generates a transaction-linked QR code instantly on the POS screen or a small display. The customer scans it with their phone camera in one tap.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h4>Identity Matched in the Cloud</h4>
+            <p>DigiSlip middleware captures the transaction and matches the customer via their scanned QR or registered phone number. First-time users register in seconds.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h4>Receipt Delivered on WhatsApp</h4>
+            <p>A fully itemised digital receipt arrives on WhatsApp in under 2 seconds. Loyalty points are credited automatically and the receipt is permanently saved in the cloud wallet.</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="phone2">
+          <div class="phone2-notch"></div>
+          <div class="p2-screen">
+            <div class="p2-topbar">
+              <div class="p2-topbar-title">DigiSlip</div>
+              <div class="p2-topbar-logo">v1.0</div>
+            </div>
+            <div class="p2-tabs">
+              <div class="p2-tab">Receipts</div>
+              <div class="p2-tab active">Scan QR</div>
+              <div class="p2-tab">Wallet</div>
+            </div>
+            <div class="p2-content">
+              <div class="p2-heading">Scan to Receive Your Receipt</div>
+              <div class="qr-frame">
+                <svg viewBox="0 0 96 96" width="94" height="94" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="96" height="96" fill="white"/>
+                  <rect x="4" y="4" width="26" height="26" fill="#0B1F4B" rx="2"/><rect x="8" y="8" width="18" height="18" fill="white" rx="1"/><rect x="12" y="12" width="10" height="10" fill="#0B1F4B" rx="1"/>
+                  <rect x="66" y="4" width="26" height="26" fill="#0B1F4B" rx="2"/><rect x="70" y="8" width="18" height="18" fill="white" rx="1"/><rect x="74" y="12" width="10" height="10" fill="#0B1F4B" rx="1"/>
+                  <rect x="4" y="66" width="26" height="26" fill="#0B1F4B" rx="2"/><rect x="8" y="70" width="18" height="18" fill="white" rx="1"/><rect x="12" y="74" width="10" height="10" fill="#0B1F4B" rx="1"/>
+                  <rect x="34" y="4" width="6" height="6" fill="#0B1F4B"/><rect x="42" y="4" width="6" height="6" fill="#0B1F4B"/><rect x="56" y="4" width="6" height="6" fill="#0B1F4B"/>
+                  <rect x="34" y="12" width="6" height="6" fill="#0B1F4B"/><rect x="56" y="12" width="6" height="6" fill="#0B1F4B"/>
+                  <rect x="42" y="20" width="6" height="6" fill="#0B1F4B"/><rect x="56" y="20" width="6" height="6" fill="#0B1F4B"/>
+                  <rect x="4" y="34" width="6" height="6" fill="#0B1F4B"/><rect x="14" y="34" width="6" height="6" fill="#0B1F4B"/><rect x="24" y="34" width="6" height="6" fill="#0B1F4B"/>
+                  <rect x="34" y="34" width="6" height="6" fill="#38BDF8"/><rect x="44" y="34" width="6" height="6" fill="#38BDF8"/><rect x="54" y="34" width="6" height="6" fill="#38BDF8"/>
+                  <rect x="64" y="34" width="6" height="6" fill="#0B1F4B"/><rect x="76" y="34" width="6" height="6" fill="#0B1F4B"/><rect x="86" y="34" width="6" height="6" fill="#0B1F4B"/>
+                  <rect x="4" y="44" width="6" height="6" fill="#0B1F4B"/><rect x="24" y="44" width="6" height="6" fill="#0B1F4B"/>
+                  <rect x="34" y="44" width="6" height="6" fill="#38BDF8"/><rect x="44" y="44" width="10" height="10" fill="#0B1F4B" rx="1"/><rect x="56" y="44" width="6" height="6" fill="#38BDF8"/>
+                  <rect x="66" y="44" width="6" height="6" fill="#0B1F4B"/><rect x="86" y="44" width="6" height="6" fill="#0B1F4B"/>
+                  <rect x="4" y="54" width="6" height="6" fill="#0B1F4B"/><rect x="14" y="54" width="6" height="6" fill="#0B1F4B"/><rect x="24" y="54" width="6" height="6" fill="#0B1F4B"/>
+                  <rect x="34" y="54" width="6" height="6" fill="#38BDF8"/><rect x="44" y="54" width="6" height="6" fill="#38BDF8"/><rect x="54" y="54" width="6" height="6" fill="#38BDF8"/>
+                  <rect x="64" y="54" width="6" height="6" fill="#0B1F4B"/><rect x="76" y="54" width="6" height="6" fill="#0B1F4B"/>
+                  <rect x="34" y="66" width="6" height="6" fill="#0B1F4B"/><rect x="46" y="66" width="6" height="6" fill="#0B1F4B"/><rect x="58" y="66" width="6" height="6" fill="#0B1F4B"/>
+                  <rect x="34" y="76" width="6" height="6" fill="#0B1F4B"/><rect x="56" y="76" width="6" height="6" fill="#0B1F4B"/><rect x="66" y="76" width="6" height="6" fill="#0B1F4B"/>
+                  <rect x="34" y="86" width="6" height="6" fill="#0B1F4B"/><rect x="44" y="86" width="6" height="6" fill="#0B1F4B"/><rect x="76" y="86" width="6" height="6" fill="#0B1F4B"/>
+                </svg>
+              </div>
+              <div class="p2-store-box">
+                <div class="p2-store-name">🏪 Al-Fatah Superstore</div>
+                <div class="p2-store-sub">Gulshan Branch · Transaction #4821</div>
+              </div>
+              <div class="p2-notice">Receipt will arrive on your <strong>WhatsApp</strong> instantly after scan</div>
+              <div class="p2-btn">📷  Scan QR Code</div>
+              <div class="p2-or">or enter phone number manually</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USP -->
+<section class="section usp">
+  <div class="section-inner">
+    <div class="section-label">Why DigiSlip</div>
+    <h2 class="section-title">Not a Receipt App. A Platform.</h2>
+    <p class="section-sub" style="color:rgba(255,255,255,0.6);">Existing alternatives are expensive POS replacements or low-adoption email receipts. DigiSlip is a plug-in middleware layer delivering cost savings, compliance, and customer data simultaneously.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Feature</th><th>DigiSlip</th><th>Traditional Receipt</th><th>POS Replacement</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Hardware Change Required</td><td class="ds">No Hardware Change — Software Install Only</td><td>None</td><td class="no">Full Replacement Required</td></tr>
+          <tr><td>Customer App Download</td><td class="ds">No App Download — Software Only</td><td>Paper Only</td><td class="no">Usually Required</td></tr>
+          <tr><td>Transaction Analytics</td><td class="ds">Built-in Dashboard</td><td class="no">None</td><td>Limited</td></tr>
+          <tr><td>FBR Compliance Ready</td><td class="ds">Fully Compatible</td><td class="no">No</td><td>Partial</td></tr>
+          <tr><td>Customer Loyalty Tools</td><td class="ds">Built-in CRM Layer</td><td class="no">None</td><td>Optional / Costly</td></tr>
+          <tr><td>Monthly Cost</td><td class="ds">PKR 2,500</td><td>PKR 500 to 2,000</td><td class="no">PKR 15,000 or more</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- MARKET -->
+<section class="section" id="market">
+  <div class="section-inner">
+    <div class="section-label">Market Opportunity</div>
+    <h2 class="section-title">Pakistan's Retail Is Large, Underdigitised, and Urgent</h2>
+    <p class="section-sub">FBR mandate pressure and rising smartphone penetration create immediate demand. We are first movers in this space.</p>
+    <div class="market-grid">
+      <div class="mkt-card"><div class="mkt-tag">TAM — Total Addressable Market</div><div class="mkt-val">$180M+</div><p class="mkt-desc">Pakistan has approximately 4.2 million registered businesses, all issuing receipts. Digitising this layer represents a massive annual SaaS opportunity at national scale.</p></div>
+      <div class="mkt-card"><div class="mkt-tag">SAM — Serviceable Addressable Market</div><div class="mkt-val">600,000</div><p class="mkt-desc">POS-enabled urban and semi-urban businesses already using electronic billing. DigiSlip integration is feasible for all of them today with zero friction.</p></div>
+      <div class="mkt-card"><div class="mkt-tag">SOM — Obtainable Market</div><div class="mkt-val">10,000+</div><p class="mkt-desc">Merchants targeted over 3 to 5 years, starting from high-volume verticals: fuel stations, supermarkets, and pharmacies across urban Pakistan.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- REVENUE -->
+<section class="section revenue" id="revenue">
+  <div class="section-inner">
+    <div class="section-label">Business Model</div>
+    <h2 class="section-title">Multi-Stream SaaS. Immediate Merchant ROI.</h2>
+    <p class="section-sub">Pricing is set below thermal paper cost, making merchant ROI immediate and the conversation objection-free from day one.</p>
+    <div class="rev-grid">
+      <div class="rev-card"><div class="rev-pct">45%</div><div class="rev-body"><h4>SaaS Subscriptions</h4><p>PKR 2,500 per month per outlet, no minimum contract. At 25,000 merchants that is PKR 62.5 million in monthly recurring revenue potential.</p></div></div>
+      <div class="rev-card"><div class="rev-pct">25%</div><div class="rev-body"><h4>POS Integration Fee</h4><p>One-time fee of PKR 5,000 to 15,000 per terminal depending on vendor complexity. Creates switching costs that improve long-term retention significantly.</p></div></div>
+      <div class="rev-card"><div class="rev-pct">20%</div><div class="rev-body"><h4>B2B Data Analytics</h4><p>Anonymised transaction data sold to FMCG brands and banks. Near-zero marginal cost makes this the highest-margin stream at scale.</p></div></div>
+      <div class="rev-card"><div class="rev-pct">10%</div><div class="rev-body"><h4>Long-Term Expansion</h4><p>Embedded BNPL and microloans from verified transaction history, insurance bundling, and premium merchant loyalty tiers launching from Year 3 onward.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TRACTION -->
+<section class="section" id="traction">
+  <div class="section-inner">
+    <div class="section-label">Traction and Validation</div>
+    <h2 class="section-title">Pre-Launch. Fully Validated.</h2>
+    <p class="section-sub">Structured retailer interviews, POS vendor scoping, and market research completed before the production build to minimise early capital burn.</p>
+    <div class="traction-grid">
+      <div class="tr-card"><div class="tr-dot"></div><div class="tr-body"><h4>Retail Pain Point Validated</h4><p>15 or more retailer interviews confirm strong and consistent demand for digital receipt infrastructure across Pakistan.</p></div></div>
+      <div class="tr-card"><div class="tr-dot"></div><div class="tr-body"><h4>POS Fragmentation Confirmed</h4><p>Three or more major POS vendors confirmed. No standard API exists, making DigiSlip the natural and necessary bridge layer.</p></div></div>
+      <div class="tr-card"><div class="tr-dot"></div><div class="tr-body"><h4>WhatsApp Adoption Validated</h4><p>Customers across all age groups already receive business messages on WhatsApp daily. No behaviour change required from users.</p></div></div>
+      <div class="tr-card"><div class="tr-dot"></div><div class="tr-body"><h4>Technical Architecture Complete</h4><p>Full transaction journey from POS trigger to WhatsApp delivery mapped, designed, and reviewed in detail by the project team.</p></div></div>
+      <div class="tr-card"><div class="tr-dot"></div><div class="tr-body"><h4>FBR Compliance Reviewed</h4><p>DigiSlip architecture is confirmed compatible with the FBR POS integration mandate currently being enforced across Pakistan.</p></div></div>
+      <div class="tr-card"><div class="tr-dot amber"></div><div class="tr-body"><h4>Pilot Partners in Progress</h4><p>Two petrol pump chains and one supermarket chain have expressed soft interest in participating in the DigiSlip pilot programme.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="section team" id="team">
+  <div class="section-inner">
+    <div class="section-label">Project Team</div>
+    <h2 class="section-title">Built at SZABIST Karachi</h2>
+    <div class="team-wrap">
+      <div class="team-card">
+        <h3 class="team-name">Humaira Bibi</h3>
+        <p class="team-id">Student ID: 2312420</p>
+        <p style="color:rgba(255,255,255,0.6);font-size:0.9rem;line-height:1.7;">Shaheed Zulfikar Ali Bhutto Institute of Science and Technology<br>Karachi Campus · Department of Computer Sciences</p>
+        <div class="team-divider"></div>
+        <p class="team-advisor">Faculty Advisor: <strong>Sir Adeel Karim</strong><br>Department of Computer Sciences · May 2026</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <h2>Ready to Go Paperless?</h2>
+  <p>Join Pakistan's first WhatsApp-first digital receipt network. Limited pilot spots available now.</p>
+  <div class="hero-btns" style="justify-content:center;">
+    <a href="mailto:digislip@example.com" class="btn-primary">Request Pilot Access</a>
+    <a href="#problem" class="btn-outline">Read the Full Brief</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">Digi<span>Slip</span></div>
+  <p>Pakistan's Digital Receipt Infrastructure · SZABIST Karachi · May 2026</p>
+  <p>© 2026 DigiSlip</p>
+</footer>
+
+</body>
+</html>
